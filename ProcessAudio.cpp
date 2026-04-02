@@ -1,10 +1,15 @@
 #include "ProcessAudio.h"
 #include <iostream>
 
-// Constructor
-ProcessAudio::ProcessAudio(std::string _filename)
+// Default constructor
+ProcessAudio::ProcessAudio() : filename("Unknown"), sampleRate(0.0), bitDepth(0), numChannels(0)
 {
-    filename = _filename;
+    std::cout << "ProcessAudio object declared without filename associated. Please load a .wav file using loadFile()." << std::endl;
+}
+// Constructor
+ProcessAudio::ProcessAudio(std::string filename)
+{
+    this->filename = filename;
     std::string filePath = "data/" + filename;
 
     audioFile.load(filePath);
@@ -32,36 +37,12 @@ void ProcessAudio::writeFile(std::string filename)
     audioFile.save(filePath);
 }
 
-void ProcessAudio::processFile(std::string effectType)
+void ProcessAudio::processFile(Effect& effect)
 {
-    if (effectType == "tremolo")
+    for (int i = 0; i < audioFile.getNumSamplesPerChannel(); i++)
     {
-        float rate, depth;
-        std::string shape;
-
-        std::cout << "Enter tremolo rate:" << std::endl;
-        std::cin >> rate;
-
-        std::cout << "Enter tremolo depth:" << std::endl;
-        std::cin >> depth;
-
-        std::cout << "Enter desired wave shape (sine, triangle, or square):" << std::endl;
-        std::cin >> shape;
-
-        Tremolo tremolo(rate, depth, shape, getSampleRate());
-
-        for (int channel = 0; channel < audioFile.getNumChannels(); channel++)
-        {
-            for (int i = 0; i < audioFile.getNumSamplesPerChannel(); i++)
-            {
-                double processedSample = tremolo.process(audioFile.samples[channel][i]);
-                audioFile.samples[channel][i] = processedSample;
-            }
-        }
-    }
-    else
-    {
-        std::cout << "Effect type not recognized. Audio not processed" << std::endl;
+        double processedSample = effect.process(audioFile.samples[0][i]);
+        audioFile.samples[0][i] = processedSample;
     }
 }
 

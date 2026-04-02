@@ -3,7 +3,7 @@
 
 #include <string>
 #include "libraries/AudioFile.h"
-#include "Tremolo.h"
+#include "Effect.h"
 
 class ProcessAudio
 {
@@ -15,13 +15,15 @@ private:
     int numChannels;
 
 public:
+    // Default constructor
+    ProcessAudio();
     // Constructor
-    ProcessAudio(std::string _filename);
+    ProcessAudio(std::string filename);
 
     // Public member functions
     void loadFile(std::string filename);
     void writeFile(std::string filename);
-    void processFile(std::string effectType);
+    void processFile(Effect& effect);
 
     float getSampleRate();
     int getBitDepth();

@@ -1,32 +1,34 @@
 #ifndef TREMOLO_H
 #define TREMOLO_H
 
-#include <string>
 #include "libraries/oscillators/rch_oscillators.h"
+#include "Effect.h"
 
-class Tremolo
+class Tremolo : public Effect
 {
-private:
-    float rate;
-    float depth;
-    float sampleRate;
+    private:
+        float rate;
+        float depth;
 
-    enum WaveShape
-    {
-        SINE,
-        TRIANGLE,
-        SQUARE
-    };
+        enum WaveShape
+        {
+            SINE,
+            TRIANGLE,
+            SQUARE
+        };
 
-    WaveShape waveShape;
+        WaveShape waveShape;
 
-    RCH::Oscillators::Templates::Sine oscSine;
-    RCH::Oscillators::Templates::Triangle oscTri;
-    RCH::Oscillators::Templates::Square oscSqu;
+        RCH::Oscillators::Templates::Sine oscSine;
+        RCH::Oscillators::Templates::Triangle oscTri;
+        RCH::Oscillators::Templates::Square oscSqu;
 
-public:
-    Tremolo(float _rate, float _depth, std::string shape, float _sampleRate);
-    float process(float sample);
+    public:
+        //Default constructor
+        Tremolo();
+        //Constructor
+        Tremolo(float _rate, float _depth, std::string shape, float _sampleRate);
+        float process(float sample) override;
 };
 
 #endif
