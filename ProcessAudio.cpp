@@ -1,12 +1,15 @@
 #include "ProcessAudio.h"
 #include <iostream>
 
-// Default constructor
+//Default constructor
+//@brief Creates and initializes an audio processor with filename = "Unknown", sample rate = 0, bit depth = 0, num channels = 0
 ProcessAudio::ProcessAudio() : filename("Unknown"), sampleRate(0.0), bitDepth(0), numChannels(0)
 {
     std::cout << "ProcessAudio object declared without filename associated. Please load a .wav file using loadFile()." << std::endl;
 }
-// Constructor
+//Constructor
+//@brief Creates and initializes an audio processor with user defined filename. Constructor automatically extracts sample rate, bit depth, and num channels from file and assigns information to relevant member variables
+//@param filename Input audio file name
 ProcessAudio::ProcessAudio(std::string filename)
 {
     this->filename = filename;
@@ -19,6 +22,9 @@ ProcessAudio::ProcessAudio(std::string filename)
     numChannels = audioFile.getNumChannels();
 }
 
+//@brief Loads an audio file, extracts sample rate, bit depth, and num channels from the file and assigns information to relevant member variables
+//@param filename Input audio file name
+//@return void
 void ProcessAudio::loadFile(std::string filename)
 {
     this->filename = filename;
@@ -31,6 +37,9 @@ void ProcessAudio::loadFile(std::string filename)
     numChannels = audioFile.getNumChannels();
 }
 
+//@brief Saves an output audio file to the "data" directory
+//@param filename Output audio file name (new file will be created)
+//@return void
 void ProcessAudio::writeFile(std::string filename)
 {
     std::string filePath = "data/" + filename;
@@ -38,15 +47,21 @@ void ProcessAudio::writeFile(std::string filename)
     std::cout << "Wrote " << filename << " to \"data\" directory." << std::endl;
 }
 
+//@brief Processes an input audio file with a user specified effect
+//@param effect Effect with which to process input audio
+//@return void
 void ProcessAudio::processFile(Effect& effect)
-{
-    for (int i = 0; i < audioFile.getNumSamplesPerChannel(); i++)
+{   for(int i = 0; i < audioFile.getNumChannels(); i++)
     {
-        double processedSample = effect.process(audioFile.samples[0][i]);
-        audioFile.samples[0][i] = processedSample;
+        for (int i = 0; i < audioFile.getNumSamplesPerChannel(); i++)
+        {
+            double processedSample = effect.process(audioFile.samples[0][i]);
+            audioFile.samples[0][i] = processedSample;
+        }
     }
 }
 
+//Getters
 float ProcessAudio::getSampleRate()
 {
     return audioFile.getSampleRate();
