@@ -4,6 +4,7 @@
 #include <string>
 #include "libraries/AudioFile.h"
 #include "Effect.h"
+#include "Tremolo.h"
 
 class ProcessAudio
 {
@@ -28,6 +29,8 @@ public:
     float getSampleRate();
     int getBitDepth();
     int getNumChannels();
+    std::vector<std::vector<double>> getSamples();
+
 };
 
 #endif
