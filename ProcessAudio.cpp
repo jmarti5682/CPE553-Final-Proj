@@ -37,12 +37,36 @@ void ProcessAudio::writeFile(std::string filename)
     audioFile.save(filePath);
 }
 
-void ProcessAudio::processFile(Effect& effect)
+void ProcessAudio::processFile(std::string effectType)
 {
-    for (int i = 0; i < audioFile.getNumSamplesPerChannel(); i++)
+    if (effectType == "tremolo")
     {
-        double processedSample = effect.process(audioFile.samples[0][i]);
-        audioFile.samples[0][i] = processedSample;
+        float rate, depth;
+        std::string shape;
+
+        std::cout << "Enter tremolo rate:" << std::endl;
+        std::cin >> rate;
+
+        std::cout << "Enter tremolo depth:" << std::endl;
+        std::cin >> depth;
+
+        std::cout << "Enter desired wave shape (sine, triangle, or square):" << std::endl;
+        std::cin >> shape;
+
+        Tremolo tremolo(rate, depth, shape, getSampleRate());
+
+        for (int channel = 0; channel < audioFile.getNumChannels(); channel++)
+        {
+            for (int i = 0; i < audioFile.getNumSamplesPerChannel(); i++)
+            {
+                double processedSample = tremolo.process(audioFile.samples[channel][i]);
+                audioFile.samples[channel][i] = processedSample;
+            }
+        }
+    }
+    else
+    {
+        std::cout << "Effect type not recognized. Audio not processed" << std::endl;
     }
 }
 
@@ -59,4 +83,9 @@ int ProcessAudio::getBitDepth()
 int ProcessAudio::getNumChannels()
 {
     return audioFile.getNumChannels();
+}
+
+std::vector<std::vector<double>> ProcessAudio::getSamples()
+{
+    return audioFile.samples;
 }
