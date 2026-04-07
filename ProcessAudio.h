@@ -3,8 +3,7 @@
 
 #include <string>
 #include "libraries/AudioFile.h"
-#include "Effect.h"
-#include "Tremolo.h"
+#include "effects/Effect.h"
 
 class ProcessAudio
 {

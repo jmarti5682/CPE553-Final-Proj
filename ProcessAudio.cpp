@@ -35,6 +35,7 @@ void ProcessAudio::writeFile(std::string filename)
 {
     std::string filePath = "data/" + filename;
     audioFile.save(filePath);
+    std::cout << "Wrote " << filename << " to \"data\" directory." << std::endl;
 }
 
 void ProcessAudio::processFile(Effect& effect)

@@ -3,9 +3,6 @@
 
 class Effect
 {
-    private:
-        
-
     public:
         virtual float process(float sample);
         virtual ~Effect() = default;

@@ -1,7 +1,7 @@
 #ifndef TREMOLO_H
 #define TREMOLO_H
 
-#include "libraries/oscillators/rch_oscillators.h"
+#include "../libraries/oscillators/rch_oscillators.h"
 #include "Effect.h"
 
 class Tremolo : public Effect
@@ -28,6 +28,7 @@ class Tremolo : public Effect
         Tremolo();
         //Constructor
         Tremolo(float _rate, float _depth, std::string shape, float _sampleRate);
+        
         float process(float sample) override;
 };
 
