@@ -1,0 +1,6 @@
+Things that still need to be done for this project
+
+1. Build visualization into the CLI
+2. Add other effect types (delay, not sure what the third will be yet)
+3. Comments & documentation
+4. Clean up and ensure it can be run consistently on different machines
