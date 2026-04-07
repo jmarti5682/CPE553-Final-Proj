@@ -9,7 +9,6 @@ class Tremolo : public Effect
     private:
         float rate;
         float depth;
-        float sampleRate;
 
         enum WaveShape
         {
