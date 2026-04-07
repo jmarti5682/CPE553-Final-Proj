@@ -22,7 +22,7 @@
 //  of samples.
 // =========================
 
-std::vector<double> getMagnitues(const std::vector<double> &samples, int fftSize)
+std::vector<double> getMagnitudes(const std::vector<double> &samples, int fftSize)
 {
     double *in = fftw_alloc_real(fftSize);
     fftw_complex *out = fftw_alloc_complex(fftSize / 2 + 1);
@@ -42,7 +42,7 @@ std::vector<double> getMagnitues(const std::vector<double> &samples, int fftSize
     {
         if (i < take)
         {
-            in[i] = sample[i];
+            in[i] = samples[i];
         }
         else
         {
