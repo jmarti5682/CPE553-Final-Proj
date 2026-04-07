@@ -60,3 +60,8 @@ int ProcessAudio::getNumChannels()
 {
     return audioFile.getNumChannels();
 }
+
+std::vector<std::vector<double>> ProcessAudio::getSamples()
+{
+    return audioFile.samples;
+}
