@@ -51,7 +51,9 @@ void ProcessAudio::writeFile(std::string filename)
 //@param effect Effect with which to process input audio
 //@return void
 void ProcessAudio::processFile(Effect& effect)
-{   for(int i = 0; i < audioFile.getNumChannels(); i++)
+{   
+    sumToMono();
+    for(int i = 0; i < audioFile.getNumChannels(); i++)
     {
         for (int i = 0; i < audioFile.getNumSamplesPerChannel(); i++)
         {
@@ -61,8 +63,31 @@ void ProcessAudio::processFile(Effect& effect)
     }
 }
 
+void ProcessAudio::sumToMono()
+{
+    if (audioFile.isStereo())
+    {
+        int numSamples = audioFile.getNumSamplesPerChannel();
+
+        std::vector<double> mono(numSamples);
+
+        for (int i = 0; i < numSamples; ++i)
+        {
+            mono[i] = 0.5 * (audioFile.samples[0][i] + audioFile.samples[1][i]);
+        }
+
+        AudioFile<double>::AudioBuffer buffer;
+        buffer.resize(1);
+        buffer[0] = mono;
+
+        audioFile.setAudioBuffer(buffer);
+    }
+    else
+        std::cout << "File is already mono." << std::endl;
+}
+
 //Getters
-float ProcessAudio::getSampleRate()
+int ProcessAudio::getSampleRate()
 {
     return audioFile.getSampleRate();
 }

@@ -10,7 +10,7 @@ class ProcessAudio
 private:
     AudioFile<double> audioFile;
     std::string filename;
-    float sampleRate;
+    int sampleRate;
     int bitDepth;
     int numChannels;
 
@@ -24,8 +24,9 @@ public:
     void loadFile(std::string filename);
     void writeFile(std::string filename);
     void processFile(Effect& effect);
+    void sumToMono();
 
-    float getSampleRate();
+    int getSampleRate();
     int getBitDepth();
     int getNumChannels();
     std::vector<std::vector<double>> getSamples();

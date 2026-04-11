@@ -8,7 +8,7 @@ Tremolo::Tremolo()
     rate = 1.0;
     depth = 1.0;
     waveShape = SINE;
-    sampleRate = 48000.0;
+    sampleRate = 48000;
 
     //Set oscillator parameters
     oscSine.setFrequency(rate);
@@ -22,7 +22,7 @@ Tremolo::Tremolo()
 //@param _depth Tremolo depth, or the amount of amplitude modulation
 //@param shape Wave shape of the modulating waveform, either sine, triangle, or square wave
 //@param _sampleRate Sample rate associated with the tremolo object. This should be extracted from the audio file itself using getSampleRate() from ProcessAudio class
-Tremolo::Tremolo(float _rate, float _depth, std::string shape, float _sampleRate)
+Tremolo::Tremolo(float _rate, float _depth, std::string shape, int _sampleRate)
 {
     rate = _rate;
     depth = _depth;

@@ -43,7 +43,7 @@ brew install ncurses fftw
 
 ### Compile
 ```bash
-g++ -std=c++17 -o editor main.cpp ProcessAudio.cpp Tremolo.cpp -lncurses -lfftw3 -lm
+g++ -std=c++17 -o editor main.cpp ProcessAudio.cpp effects/Effect.cpp effects/Tremolo.cpp -lncurses -lfftw3 -lm
 ```
 You may need to use the following command instead, to ensure proper includes/linking:
 ```bash

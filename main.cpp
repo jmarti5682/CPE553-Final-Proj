@@ -7,7 +7,8 @@
 #include "ProcessAudio.h"
 #include "effects/Effect.h"
 #include "effects/Tremolo.h"
-//#include "Visualizer.h" 
+#include "effects/Delay.h"
+#include "Visualizer.h" 
 
 using namespace std;
 
@@ -104,13 +105,25 @@ int main() {
 
         switch (choice) {
             case 1: {
+
                 cout << "\n[Configuring Tremolo]\n";
+                
                 float rate = getValidFloat("Enter LFO Rate (Hz, e.g., 5.0): ");
                 float depth = getValidFloat("Enter Depth (0.0 to 1.0): ");
                 string shape = getValidShape("Enter LFO Shape (sine/triangle/square): ");
                 
                 myStack.addEffect(make_unique<Tremolo>(rate, depth, shape, sampleRate));
+
                 cout << "-> Tremolo added to the effects stack.\n";
+                /*
+                //TEMPORARY CODE FOR TESTING DELAY EFFECT BEFORE IT IS ADDED TO THE CLI
+                float time = 0.25;
+                float mix = 0.5;
+                float feedback = 0.8;
+                int sampleRate = 48000;
+                myStack.addEffect(make_unique<Delay>(time, mix, feedback, sampleRate));
+                cout << "-> Delay added to the effects stack.\n";
+                */
                 break;
             }
             case 2: {

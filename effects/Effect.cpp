@@ -10,7 +10,7 @@ float Effect::process(float sample)
 
 //@brief Gets sample rate associated with an Effect object
 //@return Sample rate associated with the Effec
-float Effect::getSampleRate()
+int Effect::getSampleRate()
 {
     return sampleRate;
 }

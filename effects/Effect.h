@@ -7,8 +7,8 @@ class Effect
         virtual float process(float sample);
         virtual ~Effect() = default;
 
-        float sampleRate;
-        float getSampleRate();
+        int sampleRate;
+        int getSampleRate();
 };
 
 #endif

@@ -30,7 +30,7 @@ class Tremolo : public Effect
         //Default constructor
         Tremolo();
         //Constructor
-        Tremolo(float _rate, float _depth, std::string shape, float _sampleRate);
+        Tremolo(float _rate, float _depth, std::string shape, int _sampleRate);
         
         float process(float sample) override;
 };
