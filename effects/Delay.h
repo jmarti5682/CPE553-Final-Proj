@@ -6,16 +6,14 @@
 
 class Delay : public Effect
 {
-    private:
-        float time;
+    protected:
+        size_t time; //time measured in SAMPLES, not seconds; when constructor is called, time argument (in seconds) will be converted to samples
         float mix;
         float feedback;
-
-        float* buffer;
-        size_t sampleCount;
-        size_t timeSamps;
+        size_t writeIndex;
         size_t bufferLength;
-    
+        float* buffer;
+        
     public:
         //Default constructor  
         Delay();
@@ -26,6 +24,8 @@ class Delay : public Effect
 
         //Public member functions
         float process(float sample) override;
+
+        void writeBuffer(float sample, float wet);
 
         void createBuffer(); 
 };

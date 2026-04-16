@@ -8,6 +8,7 @@
 #include "effects/Effect.h"
 #include "effects/Tremolo.h"
 #include "effects/Delay.h"
+#include "effects/Chorus.h"
 #include "Visualizer.h" 
 
 using namespace std;
@@ -105,7 +106,6 @@ int main() {
 
         switch (choice) {
             case 1: {
-
                 cout << "\n[Configuring Tremolo]\n";
                 
                 float rate = getValidFloat("Enter LFO Rate (Hz, e.g., 5.0): ");
@@ -115,15 +115,19 @@ int main() {
                 myStack.addEffect(make_unique<Tremolo>(rate, depth, shape, sampleRate));
 
                 cout << "-> Tremolo added to the effects stack.\n";
+                
+                //TEMPORARY CODE FOR TESTING DELAY/CHORUS EFFECT BEFORE IT IS ADDED TO THE CLI
                 /*
-                //TEMPORARY CODE FOR TESTING DELAY EFFECT BEFORE IT IS ADDED TO THE CLI
-                float time = 0.25;
-                float mix = 0.5;
-                float feedback = 0.8;
+                float time = 0.010;
+                float mix = 0.75;
+                float feedback = 0.4;
+                float rate = 1.65;
+                float depth = 0.002;
                 int sampleRate = 48000;
-                myStack.addEffect(make_unique<Delay>(time, mix, feedback, sampleRate));
-                cout << "-> Delay added to the effects stack.\n";
+                myStack.addEffect(make_unique<Chorus>(time, mix, feedback, rate, depth, sampleRate));
+                cout << "-> Chorus added to the effects stack.\n";
                 */
+                
                 break;
             }
             case 2: {

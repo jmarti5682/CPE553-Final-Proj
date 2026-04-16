@@ -47,7 +47,7 @@ g++ -std=c++17 -o editor main.cpp ProcessAudio.cpp effects/Effect.cpp effects/Tr
 ```
 You may need to use the following command instead, to ensure proper includes/linking:
 ```bash
-g++ -std=c++17 -I/opt/homebrew/opt/fftw/include -L/opt/homebrew/opt/fftw/lib -o editor main.cpp ProcessAudio.cpp effects/Effect.cpp effects/Tremolo.cpp -lncurses -lfftw3 -lm
+g++ -std=c++17 -I/opt/homebrew/opt/fftw/include -L/opt/homebrew/opt/fftw/lib -o editor main.cpp ProcessAudio.cpp effects/Effect.cpp effects/Tremolo.cpp effects/Delay.cpp effects/Chorus.cpp -lncurses -lfftw3 -lm
 ```
 
 ### Run
