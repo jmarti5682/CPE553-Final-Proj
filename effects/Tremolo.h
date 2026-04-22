@@ -3,6 +3,7 @@
 
 #include "../libraries/oscillators/rch_oscillators.h"
 #include "Effect.h"
+#include <string>//...
 
 class Tremolo : public Effect
 {

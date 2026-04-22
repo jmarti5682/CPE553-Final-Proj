@@ -1,9 +1,0 @@
-Things that still need to be done for this project
-
-1. Build visualization into the CLI
-2. Migrate EffectStack class from main to its own .h and .cpp
-3. Add other effect types (delay, not sure what the third will be yet)
-4. Comments & documentation
-5. Clean up and ensure it can be run consistently on different machines
-6. Allow user to specify their choice of audio file. Will probably include several test input files and provide a list for the user at runtime.
-7. Figure out weird phase alignment stuff for stereo OR just sum everything to mono in ProcessAudio

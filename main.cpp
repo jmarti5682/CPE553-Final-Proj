@@ -9,11 +9,11 @@
 #include "effects/Tremolo.h"
 #include "effects/Delay.h"
 #include "effects/Chorus.h"
-#include "Visualizer.h" 
+// #include "Visualizer.h" // 依然保持注释，除非队友已经写好了这个模块
 
 using namespace std;
 
-// 1. 将效果器栈伪装成单一 Effect
+// 1. 将效果器栈伪装成单一 Effect (组合模式)
 class EffectStack : public Effect {
 private:
     vector<unique_ptr<Effect>> stack;
@@ -99,38 +99,47 @@ int main() {
     while (keepRunning) {
         cout << "\n--- Main Menu ---\n"
              << "1. Add Tremolo Effect\n"
-             << "2. Process Audio & Save\n"
-             << "3. Exit\n";
+             << "2. Add Delay Effect\n"
+             << "3. Add Chorus Effect\n"
+             << "4. Process Audio & Save\n"
+             << "5. Exit\n";
              
-        int choice = getValidInt("Enter your choice (1-3): ");
+        int choice = getValidInt("Enter your choice (1-5): ");
 
         switch (choice) {
             case 1: {
                 cout << "\n[Configuring Tremolo]\n";
-                
                 float rate = getValidFloat("Enter LFO Rate (Hz, e.g., 5.0): ");
                 float depth = getValidFloat("Enter Depth (0.0 to 1.0): ");
                 string shape = getValidShape("Enter LFO Shape (sine/triangle/square): ");
                 
                 myStack.addEffect(make_unique<Tremolo>(rate, depth, shape, sampleRate));
-
                 cout << "-> Tremolo added to the effects stack.\n";
-                
-                //TEMPORARY CODE FOR TESTING DELAY/CHORUS EFFECT BEFORE IT IS ADDED TO THE CLI
-                /*
-                float time = 0.010;
-                float mix = 0.75;
-                float feedback = 0.4;
-                float rate = 1.65;
-                float depth = 0.002;
-                int sampleRate = 48000;
-                myStack.addEffect(make_unique<Chorus>(time, mix, feedback, rate, depth, sampleRate));
-                cout << "-> Chorus added to the effects stack.\n";
-                */
-                
                 break;
             }
             case 2: {
+                cout << "\n[Configuring Delay]\n";
+                float time = getValidFloat("Enter Delay Time (in seconds, e.g., 0.5): ");
+                float mix = getValidFloat("Enter Mix level (0.0 to 1.0, 0.5 is half-half): ");
+                float feedback = getValidFloat("Enter Feedback amount (0.0 to 1.0): ");
+                
+                myStack.addEffect(make_unique<Delay>(time, mix, feedback, static_cast<int>(sampleRate)));
+                cout << "-> Delay added to the effects stack.\n";
+                break;
+            }
+            case 3: {
+                cout << "\n[Configuring Chorus]\n";
+                float time = getValidFloat("Enter Base Delay Time (in seconds, e.g., 0.015): ");
+                float mix = getValidFloat("Enter Mix level (0.0 to 1.0): ");
+                float feedback = getValidFloat("Enter Feedback amount (0.0 to 1.0): ");
+                float rate = getValidFloat("Enter LFO Rate (Hz, e.g., 1.5): ");
+                float depth = getValidFloat("Enter LFO Depth (e.g., 0.002): ");
+                
+                myStack.addEffect(make_unique<Chorus>(time, mix, feedback, rate, depth, sampleRate));
+                cout << "-> Chorus added to the effects stack.\n";
+                break;
+            }
+            case 4: {
                 if (myStack.isEmpty()) {
                     cout << "[Warning] Your effects stack is empty! Add an effect first.\n";
                     break;
@@ -144,7 +153,7 @@ int main() {
                 keepRunning = false; 
                 break;
             }
-            case 3: {
+            case 5: {
                 cout << "Exiting...\n";
                 keepRunning = false;
                 break;
