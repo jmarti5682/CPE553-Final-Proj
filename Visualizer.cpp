@@ -2,17 +2,28 @@
     Name: Jose Martinez-Ponce
     Date: 04/02/2026
     Purpose: Basic frequency bar visualizer using ncurses.
-             Uses FFTW3 library for the FFT computation.
+             Uses FFTW3 library for the FFT computation. Adding in Hann-Windowed FFT
 */
 
-#include <ncurses.h>
-#include <vector>
-#include <cmath>
-#include <string>
-#include <thread>
-#include <chrono>
-#include <fftw3.h>
-#include "ProcessAudio.h"
+#include "Visualizer.h"
+
+// static constants to visualize color in visualizer
+static constexpr int CLR_TITLE = 1; // Color title
+static constexpr int CLR_LOW = 2;   // Color Low = green - bottom
+static constexpr int CLR_MID = 3;   // Color Mid = yellow - middle
+static constexpr int CLR_HIGH = 4;  // Color High = red - top
+static constexpr int CLR_PEAK = 5;  // Color Peak = white on red - peak
+
+static void initColors()
+{
+    start_color();
+    use_default_colors();
+    init_pair(CLR_TITLE, COLOR_BLACK, COLOR_CYAN);
+    init_pair(CLR_LOW, COLOR_GREEN, -1);
+    init_pair(CLR_MID, COLOR_YELLOW, -1);
+    init_pair(CLR_HIGH, COLOR_RED, -1);
+    init_pair(CLR_PEAK, COLOR_WHITE, COLOR_RED);
+}
 
 // ==========================
 //  FFT  (via FFTW3)
@@ -39,9 +50,11 @@ std::vector<double> getMagnitudes(const std::vector<double> &samples, int fftSiz
 
     for (int i = 0; i < fftSize; i++)
     {
+        // Hann Window
+        double w = 0.5 * (1.0 - std::cos(2.0 * M_PI * i / (fftSize - 1)));
         if (i < take)
         {
-            in[i] = samples[i];
+            in[i] = samples[i] * w;
         }
         else
         {
@@ -72,82 +85,108 @@ std::vector<double> getMagnitudes(const std::vector<double> &samples, int fftSiz
 //  VISUALIZER
 // =========================
 
-class Visualizer
+void Visualizer::drawFrame(const std::vector<double> &chunk, std::string label)
 {
-public:
-    static constexpr int FFT_SIZE = 2048;
+    int rows, cols;
+    getmaxyx(stdscr, rows, cols);
 
-    // Draw a single frame from a chunk of samples
-    void drawFrame(const std::vector<double> &chunk, std::string label)
+    int barRows = rows - 2; // row 0 = title, last row = empty
+    int numBars = cols / 2;
+
+    if (barRows < 1 || numBars < 1)
+        return;
+
+    std::vector<double> mag = getMagnitudes(chunk, FFT_SIZE);
+    int numBins = (int)mag.size();
+
+    // Map bins to bars linearly
+    std::vector<double> barMag(numBars, 0.0);
+    for (int b = 0; b < numBars; b++)
     {
-        int rows, cols;
-        getmaxyx(stdscr, rows, cols);
-
-        int barRows = rows - 2; // row 0 = title, last row = empty
-        int numBars = cols / 2;
-
-        if (barRows < 1 || numBars < 1)
-            return;
-
-        std::vector<double> mag = getMagnitudes(chunk, FFT_SIZE);
-        int numBins = (int)mag.size();
-
-        // Map bins to bars linearly
-        std::vector<double> barMag(numBars, 0.0);
-        for (int b = 0; b < numBars; b++)
+        int bin0 = b * numBins / numBars;
+        int bin1 = (b + 1) * numBins / numBars;
+        if (bin1 <= bin0)
         {
-            int bin0 = b * numBins / numBars;
-            int bin1 = (b + 1) * numBins / numBars;
-            if (bin1 <= bin0)
-            {
-                bin1 = bin0 + 1;
-            }
-            double sum = 0.0;
-            for (int i = bin0; i < bin1 && i < numBins; i++)
-            {
-                sum += mag[i];
-            }
-            barMag[b] = sum / (bin1 - bin0);
+            bin1 = bin0 + 1;
         }
-
-        // Find max magnitude to normalize bar heights
-        double maxMag = 0.001;
-        for (double m : barMag)
+        double sum = 0.0;
+        for (int i = bin0; i < bin1 && i < numBins; i++)
         {
-            if (m > maxMag)
+            sum += mag[i];
+        }
+        barMag[b] = sum / (bin1 - bin0);
+    }
+
+    // Find max magnitude to normalize bar heights
+    double maxMag = 0.001;
+    for (double m : barMag)
+    {
+        if (m > maxMag)
+        {
+            maxMag = m;
+        }
+    }
+    // Title bar
+    std::string title = " CPE553 Visualizer  [" + label + "]  (press 'q' to exit) ";
+    while ((int)title.size() < cols)
+    {
+        title += ' ';
+    }
+    title.resize(cols);
+    attron(COLOR_PAIR(CLR_TITLE) | A_BOLD);
+    mvaddstr(0, 0, title.c_str());
+    attroff(COLOR_PAIR(CLR_TITLE | A_BOLD));
+
+    // Draw bars
+    for (int b = 0; b < numBars; b++)
+    {
+        int barHeight = (int)((barMag[b] / maxMag) * barRows);
+
+        for (int row = 0; row < barRows; row++)
+        {
+            int screenRow = row + 1;
+            int screenCol = b * 2;
+
+            // Fill from the bottom up
+            bool filled = (row >= barRows - barHeight);
+            bool isPeak = filled && (row == barRows - barHeight);
+
+            if (filled)
             {
-                maxMag = m;
+                double relativePos = 1.0 - (double)row / barRows; // 1.0 = Bottom, 0.0 = Top
+                int pair;
+                if (isPeak)
+                {
+                    pair = CLR_PEAK;
+                }
+                else if (relativePos < 0.45)
+                {
+                    pair = CLR_LOW;
+                }
+                else if (relativePos < 0.75)
+                {
+                    pair = CLR_MID;
+                }
+                else
+                {
+                    pair = CLR_HIGH;
+                }
+
+                attron(COLOR_PAIR(pair));
+                mvaddch(screenRow, screenCol, ACS_BLOCK);
+                mvaddch(screenRow, screenCol + 1, ' ');
+                attroff(COLOR_PAIR(pair));
             }
-        }
-        // Title bar
-        std::string title = " CPE553 Visualizer  [" + label + "]  (press 'q' to exit) ";
-        while ((int)title.size() < cols)
-        {
-            title += ' ';
-        }
-        title.resize(cols);
-        mvaddstr(0, 0, title.c_str());
-
-        // Draw bars
-        for (int b = 0; b < numBars; b++)
-        {
-            int barHeight = (int)((barMag[b] / maxMag) * barRows);
-
-            for (int row = 0; row < barRows; row++)
+            else
             {
-                int screenRow = row + 1;
-                int screenCol = b * 2;
-
-                // Fill from the bottom up
-                bool filled = (row >= barRows - barHeight);
-                mvaddch(screenRow, screenCol, filled ? '#' : ' ');
+                mvaddch(screenRow, screenCol, ' ');
                 mvaddch(screenRow, screenCol + 1, ' ');
             }
         }
-
-        refresh();
     }
-};
+
+    refresh();
+}
 
 // =========================
 //  Called from main()
@@ -175,6 +214,7 @@ void visualize(ProcessAudio &processor, std::string label)
     noecho();
     curs_set(0);
     nodelay(stdscr, TRUE);
+    initColors();
 
     Visualizer viz;
     int offset = 0;
