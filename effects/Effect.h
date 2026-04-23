@@ -3,12 +3,12 @@
 
 class Effect
 {
-    public:
-        virtual float process(float sample);
-        virtual ~Effect() = default;
+public:
+    virtual float process(float sample);
+    virtual ~Effect() = default;
 
-        int sampleRate;
-        int getSampleRate();
+    int sampleRate;
+    int getSampleRate();
 };
 
 #endif

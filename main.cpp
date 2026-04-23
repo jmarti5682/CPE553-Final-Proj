@@ -104,10 +104,10 @@ string getValidShape(const string &prompt)
 int main()
 {
     cout << "=== Audio Effects Engine CLI ===\n";
-
     ProcessAudio engine("synth_test.wav");
     float sampleRate = engine.getSampleRate();
-    string currentLabel = "synth_test.wav";
+    string currentLabel = "Synth (synth_test.wav)";
+    string currentFile = "synth_test.wav";
 
     if (sampleRate <= 0)
     {
@@ -126,7 +126,7 @@ int main()
              << "3. Add Delay Effect\n"
              << "4. Add Chorus Effect\n"
              << "5. Process Audio & Save\n"
-             << "6. Visualize Audio\n"
+             << "6. Visualize Audio & Play\n"
              << "7. Exit\n";
 
         int choice = getValidInt("Enter your choice (1-7): ");
@@ -148,6 +148,7 @@ int main()
             {
                 engine.loadFile("testaudio_clean.wav");
                 currentLabel = "Guitar (testaudio_clean.wav)";
+                currentFile = "testaudio_clean.wav";
                 cout << "-> Loaded guitar test audio for processing\n";
                 break;
             }
@@ -155,6 +156,7 @@ int main()
             {
                 engine.loadFile("synth_test.wav");
                 currentLabel = "Synth (synth_test.wav)";
+                currentFile = "synth_test.wav";
                 cout << "-> Loaded synth test audio for processing\n";
                 break;
             }
@@ -162,6 +164,7 @@ int main()
             {
                 engine.loadFile("drum_test.wav");
                 currentLabel = "Drums (drum_test.wav)";
+                currentFile = "drum_test.wav";
                 cout << "-> Loaded drum test audio for processing\n";
                 break;
             }
@@ -215,13 +218,15 @@ int main()
             engine.processFile(myStack);
 
             engine.writeFile("output.wav");
-            cout << "-> Success! Saved to 'output.wav'.\n";
-            keepRunning = false;
+            cout << "[SYSTEM] Success! Saved to 'output.wav'.\n";
+            cout << "[SYSTEM] Select option 6 to visualize and hear the processed audio.\n";
+            currentFile = "output.wav";
+            currentLabel = "Processed Output";
             break;
         }
         case 6:
         {
-            visualize(engine, currentLabel);
+            visualize(engine, currentLabel, currentFile);
             break;
         }
         case 7:

@@ -90,7 +90,7 @@ void Visualizer::drawFrame(const std::vector<double> &chunk, std::string label)
     int rows, cols;
     getmaxyx(stdscr, rows, cols);
 
-    int barRows = rows - 2; // row 0 = title, last row = empty
+    int barRows = rows - 4; // row 0 = title, last row = freqLabels
     int numBars = cols / 2;
 
     if (barRows < 1 || numBars < 1)
@@ -185,6 +185,51 @@ void Visualizer::drawFrame(const std::vector<double> &chunk, std::string label)
         }
     }
 
+    // Bottom Row - Frequency Labels
+    std::vector<std::pair<int, std::string>> freqLabels = {
+        {20, "20"},
+        {50, "50"},
+        {100, "100"},
+        {200, "200"},
+        {500, "500"},
+        {1000, "1k"},
+        {2000, "2k"},
+        {5000, "5k"},
+        {10000, "10k"},
+        {20000, "20k"}};
+    std::string tickRow(cols, ' ');
+    std::string labelRow(cols, ' ');
+    int lastEnd = -1;
+    // std::string bottomRow(cols, ' ');
+    for (auto &[freq, label] : freqLabels)
+    {
+        int bar = (int)((double)freq / (sampleRate / 2.0) * numBars);
+        int col = bar * 2;
+        int startCol = col - (int)label.size() / 2; // centering
+
+        if (startCol < 0)
+        {
+            startCol = 0;
+        }
+
+        if (col < cols)
+        {
+            tickRow[col] = '|';
+        }
+
+        // if no overlap from previous
+        if (startCol > lastEnd && startCol + (int)label.size() < cols)
+        {
+            for (int i = 0; i < (int)label.size(); i++)
+            {
+                labelRow[startCol + i] = label[i];
+            }
+            lastEnd = startCol + (int)label.size();
+        }
+    }
+    mvaddstr(rows - 2, 0, tickRow.c_str());
+    mvaddstr(rows - 1, 0, labelRow.c_str());
+
     refresh();
 }
 
@@ -194,7 +239,7 @@ void Visualizer::drawFrame(const std::vector<double> &chunk, std::string label)
 //  chunk by chunk and animates
 //  the bars.
 // =========================
-void visualize(ProcessAudio &processor, std::string label)
+void visualize(ProcessAudio &processor, std::string label, std::string filename)
 {
     auto samples = processor.getSamples();
     int sampleRate = (int)processor.getSampleRate();
@@ -216,12 +261,20 @@ void visualize(ProcessAudio &processor, std::string label)
     nodelay(stdscr, TRUE);
     initColors();
 
+    // MACOS COMMAND - ONLY WORKS ON MAC
+    std::string cmd = "afplay data/" + filename + " &";
+    system(cmd.c_str());
+
     Visualizer viz;
+    viz.sampleRate = sampleRate;
     int offset = 0;
+
+    auto startTime = std::chrono::steady_clock::now();
 
     while (offset + Visualizer::FFT_SIZE < (int)leftChannel.size())
     {
         std::vector<double> chunk(leftChannel.begin() + offset, leftChannel.begin() + offset + Visualizer::FFT_SIZE);
+
         viz.drawFrame(chunk, label);
 
         if (getch() == 'q')
@@ -229,9 +282,20 @@ void visualize(ProcessAudio &processor, std::string label)
             break;
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(40));
+        // There is a slight delay with the visualization and playback
+        // Need to get track of the delay
         offset += hop;
+        double expectedMs = (double)offset / sampleRate * 1000.0;
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - startTime).count();
+        int sleepMs = (int)(expectedMs - elapsed);
+        if (sleepMs > 0)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleepMs));
+        }
     }
+
+    // MACOS COMMAND
+    system("pkill afplay");
 
     endwin();
 }

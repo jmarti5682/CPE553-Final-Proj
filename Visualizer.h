@@ -24,7 +24,7 @@
 // =========================
 
 std::vector<double> getMagnitudes(const std::vector<double> &samples, int fftSize);
-void visualize(ProcessAudio &processor, std::string label);
+void visualize(ProcessAudio &processor, std::string label, std::string filename);
 
 // =========================
 //  VISUALIZER
@@ -34,6 +34,7 @@ class Visualizer
 {
 public:
     static constexpr int FFT_SIZE = 2048;
+    int sampleRate = 44100;
 
     // Draw a single frame from a chunk of samples
     void drawFrame(const std::vector<double> &chunk, std::string label);
