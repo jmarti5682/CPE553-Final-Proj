@@ -85,7 +85,7 @@ string getValidShape(const string& prompt) {
 int main() {
     cout << "=== Audio Effects Engine CLI ===\n";
     
-    ProcessAudio engine("testaudio_clean.wav");
+    ProcessAudio engine("synth_test.wav");
     float sampleRate = engine.getSampleRate();
     
     if (sampleRate <= 0) {
@@ -98,16 +98,44 @@ int main() {
 
     while (keepRunning) {
         cout << "\n--- Main Menu ---\n"
-             << "1. Add Tremolo Effect\n"
-             << "2. Add Delay Effect\n"
-             << "3. Add Chorus Effect\n"
-             << "4. Process Audio & Save\n"
-             << "5. Exit\n";
+             << "1. Select Audio File\n"
+             << "2. Add Tremolo Effect\n"
+             << "3. Add Delay Effect\n"
+             << "4. Add Chorus Effect\n"
+             << "5. Process Audio & Save\n"
+             << "6. Exit\n";
              
-        int choice = getValidInt("Enter your choice (1-5): ");
+        int choice = getValidInt("Enter your choice (1-6): ");
 
         switch (choice) {
             case 1: {
+                cout << "\n--- Audio Files ---\n"
+                     << "1. Guitar\n"
+                     << "2. Synth\n"
+                     << "3. Drums\n";
+
+                int choiceAudio = getValidInt("Enter your choice (1-3): ");
+
+                switch(choiceAudio) {
+                    case 1: {
+                        engine.loadFile("testaudio_clean.wav");
+                        cout << "-> Loaded guitar test audio for processing\n";
+                        break;
+                    }
+                    case 2: {
+                        engine.loadFile("synth_test.wav");
+                        cout << "-> Loaded synth test audio for processing\n";
+                        break;
+                    }
+                    case 3: {
+                        engine.loadFile("drum_test.wav");
+                        cout << "-> Loaded drum test audio for processing\n";
+                        break;
+                    }   
+                }
+                break;
+            }
+            case 2: {
                 cout << "\n[Configuring Tremolo]\n";
                 float rate = getValidFloat("Enter LFO Rate (Hz, e.g., 5.0): ");
                 float depth = getValidFloat("Enter Depth (0.0 to 1.0): ");
@@ -117,7 +145,7 @@ int main() {
                 cout << "-> Tremolo added to the effects stack.\n";
                 break;
             }
-            case 2: {
+            case 3: {
                 cout << "\n[Configuring Delay]\n";
                 float time = getValidFloat("Enter Delay Time (in seconds, e.g., 0.5): ");
                 float mix = getValidFloat("Enter Mix level (0.0 to 1.0, 0.5 is half-half): ");
@@ -127,7 +155,7 @@ int main() {
                 cout << "-> Delay added to the effects stack.\n";
                 break;
             }
-            case 3: {
+            case 4: {
                 cout << "\n[Configuring Chorus]\n";
                 float time = getValidFloat("Enter Base Delay Time (in seconds, e.g., 0.015): ");
                 float mix = getValidFloat("Enter Mix level (0.0 to 1.0): ");
@@ -139,7 +167,7 @@ int main() {
                 cout << "-> Chorus added to the effects stack.\n";
                 break;
             }
-            case 4: {
+            case 5: {
                 if (myStack.isEmpty()) {
                     cout << "[Warning] Your effects stack is empty! Add an effect first.\n";
                     break;
@@ -153,7 +181,7 @@ int main() {
                 keepRunning = false; 
                 break;
             }
-            case 5: {
+            case 6: {
                 cout << "Exiting...\n";
                 keepRunning = false;
                 break;
