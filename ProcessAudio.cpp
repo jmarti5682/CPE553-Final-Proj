@@ -53,7 +53,7 @@ void ProcessAudio::writeFile(std::string filename)
 void ProcessAudio::processFile(Effect& effect)
 {   
     sumToMono();
-    for(int i = 0; i < audioFile.getNumChannels(); i++)
+    for(int i = 0; i < audioFile.getNumChannels(); i++) //this is not necessary after summing to mono, but I'm leaving it in case I add stereo support
     {
         for (int i = 0; i < audioFile.getNumSamplesPerChannel(); i++)
         {
@@ -63,6 +63,8 @@ void ProcessAudio::processFile(Effect& effect)
     }
 }
 
+//@brief Converts an audio file from stereo to mono by summing the left and right channel samples with normalized amplitude
+//@return void
 void ProcessAudio::sumToMono()
 {
     if (audioFile.isStereo())

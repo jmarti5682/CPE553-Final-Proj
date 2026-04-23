@@ -26,6 +26,7 @@ public:
     void processFile(Effect& effect);
     void sumToMono();
 
+    //Getters
     int getSampleRate();
     int getBitDepth();
     int getNumChannels();
