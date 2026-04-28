@@ -10,6 +10,7 @@
 #include "effects/Delay.h"
 #include "effects/Chorus.h"
 #include "Visualizer.h" // 依然保持注释，除非队友已经写好了这个模块
+#include <filesystem>
 
 using namespace std;
 
