@@ -30,7 +30,7 @@ The visualizer shows which frequencies are present in the audio, bass frequencie
 **Peizhi Liu -  Command Line Interface ('main.cpp')**
 
 - Allows users to load an effect, define effect parameters, then save output audio with effect applied. 
-
+-Integrated three effects stacks into the program's user interface.Implemented a mechanism to automatically reset the effects stacks when switching tracks.
 ---
 
 ## How to Run:
