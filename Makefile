@@ -26,3 +26,6 @@ clean:
 	rm -f $(OBJS) $(TARGET)
 
 .PHONY: all clean
+
+windows:
+	g++ -std=c++17 -Wall -Ilibraries main.cpp ProcessAudio.cpp effects/Effect.cpp effects/Delay.cpp effects/Tremolo.cpp effects/Chorus.cpp -o audio_app.exe
