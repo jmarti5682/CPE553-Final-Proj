@@ -9,12 +9,12 @@
 #include "effects/Tremolo.h"
 #include "effects/Delay.h"
 #include "effects/Chorus.h"
-#include "Visualizer.h" // 依然保持注释，除非队友已经写好了这个模块
+#include "Visualizer.h" // The Windows system cannot display the visualization; it needs to be commented out.
 #include <filesystem>
 
 using namespace std;
 
-// 1. 将效果器栈伪装成单一 Effect (组合模式)
+// 1.An Effect Stack Masquerading as a Single Effect
 class EffectStack : public Effect
 {
 private:
@@ -42,7 +42,7 @@ public:
     }
 };
 
-// 2. 防呆输入清洗库
+// 2. Error Prevention
 int getValidInt(const string &prompt)
 {
     int choice;
@@ -101,7 +101,7 @@ string getValidShape(const string &prompt)
     }
 }
 
-// 3. 核心 CLI 循环
+// 3. core CLI loop
 int main()
 {
     cout << "=== Audio Effects Engine CLI ===\n";
@@ -140,45 +140,45 @@ int main()
             cout << "\n--- Scanning 'data' directory ---\n";
             vector<string> wavFiles;
             
-            // 1. 物理防爆：探测文件夹是否存在
+            // 1.Does the folder exist?
             if (!std::filesystem::exists("data") || !std::filesystem::is_directory("data")) {
                 cout << "[Fatal Error] 'data' directory not found! Please create a folder named 'data' and put .wav files inside.\n";
                 break;
             }
 
-            // 2. 动态扫描：只提取 .wav 结尾的文件，并且只保留纯文件名
+            // 2.Extract only files ending in .wav, and retain only the filename itself.
             for (const auto& entry : std::filesystem::directory_iterator("data")) {
                 if (entry.path().extension() == ".wav") {
-                    // 致命修改：使用 .filename() 剥离路径，只保留 "PeizhiLiu-test.wav"
+                    // Use .filename() to strip the path.
                     wavFiles.push_back(entry.path().filename().string()); 
                 }
             }
 
-            // 3. 业务防呆：文件夹里没有音频怎么办？
+            // 3.When there is no audio in the folder
             if (wavFiles.empty()) {
                 cout << "[Error] No .wav files found in the 'data' directory.\n";
                 break;
             }
 
-            // 4. 动态生成菜单
+            // 4. menu
             for (size_t i = 0; i < wavFiles.size(); ++i) {
                 cout << i + 1 << ". " << wavFiles[i] << "\n";
             }
 
-            // 5. 安全捕获用户输入
+            // 5. user input
             int fileChoice = getValidInt("Select a file by number (1-" + to_string(wavFiles.size()) + "): ");
             
             if (fileChoice >= 1 && fileChoice <= static_cast<int>(wavFiles.size())) {
                 string selectedPath = wavFiles[fileChoice - 1];
                 
-                // 加载选中的文件
+                
                 engine.loadFile(selectedPath);
                 currentFile = selectedPath;
                 currentLabel = "Custom (" + selectedPath + ")";
                 
                 cout << "-> Successfully loaded '" << selectedPath << "' for processing.\n";
                 
-                // 重要防呆：如果用户换了新歌，必须清空之前的效果器栈，否则特效会跨歌曲叠加！
+                // The previous effects stack must be cleared.
                 myStack = EffectStack(); 
                 cout << "-> [Notice] Effects stack has been reset for the new audio file.\n";
             } else {
@@ -236,7 +236,7 @@ int main()
             cout << "Enter the name for your output file (e.g., my_awesome_track.wav): ";
             cin >> outName;
 
-            //如果用户忘记打 .wav，系统自动加上
+            //If the user forgets to add .wav, the system will automatically add it.
             if (outName.length() < 4 || outName.substr(outName.length() - 4) != ".wav") {
                 outName += ".wav";
             }
