@@ -206,6 +206,7 @@ int main()
             cout << "-> Chorus added to the effects stack.\n";
             break;
         }
+    
         case 5:
         {
             if (myStack.isEmpty())
@@ -217,11 +218,20 @@ int main()
 
             engine.processFile(myStack);
 
-            engine.writeFile("output.wav");
-            cout << "[SYSTEM] Success! Saved to 'output.wav'.\n";
-            cout << "[SYSTEM] Select option 6 to visualize and hear the processed audio.\n";
-            currentFile = "output.wav";
-            currentLabel = "Processed Output";
+            string outName;
+            cout << "Enter the name for your output file (e.g., my_awesome_track.wav): ";
+            cin >> outName;
+
+            //如果用户忘记打 .wav，系统自动加上
+            if (outName.length() < 4 || outName.substr(outName.length() - 4) != ".wav") {
+                outName += ".wav";
+            }
+
+            engine.writeFile(outName);
+            cout << "[SYSTEM] Success! Saved to '" << outName << "'.\n";
+            cout << "[SYSTEM] (Visualization module is currently disabled for Windows OS compatibility)\n";
+            
+            keepRunning = false; // 导出后退出程序
             break;
         }
         case 6:
