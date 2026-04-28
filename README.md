@@ -1,8 +1,9 @@
 # Audio Editor and Visualizer
-> CPE555: Intro to C++
+> CPE553: Intro to C++
 > 
 > Jose Martinez-Ponce, Benjamin Kunze, Peizhi Liu
 
+## IN ORDER TO MAXIMIZE FUNCTIONALITY, THIS PROGRAM HAS BEEN DESIGNED FOR USE WITH MACOS. IN ITS CURRENT FORM, THE PROGRAM DOES NOT COMPILE ON WINDOWS.
 
 ## Program Purpose
 
@@ -26,6 +27,10 @@ The visualizer shows which frequencies are present in the audio, bass frequencie
 - Loads and write '.wav' files using the 'AudioFile' library
 - Implemented tremolo effect with adjustable rate, depth, and wave shape (sine, triangle, square)
 
+**Peizhi Liu -  Command Line Interface ('main.cpp')**
+
+- Allows users to load an effect, define effect parameters, then save output audio with effect applied. 
+
 ---
 
 ## How to Run:
@@ -33,7 +38,8 @@ The visualizer shows which frequencies are present in the audio, bass frequencie
 ### Dependencies
 - 'ncurses' - for terminal rendering
 - 'fftw3' - for frequency analysis
-- 'AudioFile' - header-only library
+- 'AudioFile' - header-only library for reading in/writing audio
+- 'rch_oscillators' - basic oscillator library
 
 **Install dependencies on macOS:**
 
@@ -41,20 +47,53 @@ The visualizer shows which frequencies are present in the audio, bass frequencie
 brew install ncurses fftw
 ```
 
-### Compile
+### Recommended: Using Makefile
+
+The Makefile automates the compilation process with proper flags and dependencies. The Makefile does NOT install dependencies for you, so please make sure to complete the prior steps for installing dependencies. 
+
+**Compile using Makefile:**
 ```bash
-g++ -std=c++17 -o editor main.cpp ProcessAudio.cpp effects/Effect.cpp effects/Tremolo.cpp -lncurses -lfftw3 -lm
-```
-You may need to use the following command instead, to ensure proper includes/linking:
-```bash
-g++ -std=c++17 -I/opt/homebrew/opt/fftw/include -L/opt/homebrew/opt/fftw/lib -o editor main.cpp ProcessAudio.cpp effects/Effect.cpp effects/Tremolo.cpp effects/Delay.cpp effects/Chorus.cpp -lncurses -lfftw3 -lm
+make
 ```
 
-### Run
+This will generate an executable named `audio_editor` that contains all the source files and linked libraries.
+
+**Run the program:**
+```bash
+./audio_editor
+```
+
+**Clean up build artifacts:**
+```bash
+make clean
+```
+
+This removes all object files and the executable, allowing for a fresh rebuild.
+
+---
+
+### Legacy: Manual Compilation (Failsafe)
+
+If the Makefile approach doesn't work, you can compile manually using the commands below.
+
+**Compile (basic):**
+```bash
+g++ -std=c++17 -o audio_editor main.cpp ProcessAudio.cpp Visualizer.cpp effects/Effect.cpp effects/Tremolo.cpp effects/Delay.cpp effects/Chorus.cpp -lncurses -lfftw3 -lm
+```
+
+**Compile (with explicit paths for macOS Homebrew):**
+```bash
+g++ -std=c++17 -I/opt/homebrew/opt/fftw/include -L/opt/homebrew/opt/fftw/lib -o audio_editor main.cpp ProcessAudio.cpp Visualizer.cpp effects/Effect.cpp effects/Tremolo.cpp effects/Delay.cpp effects/Chorus.cpp -lncurses -lfftw3 -lm
+```
+
+**Run:**
 ```bash
 ./editor
 ```
 
-Make sure your '.wav' file is located inside of the '/data' folder. The program currently loads the 'testaudio_clean.wav' by defualt.
+---
 
+### Audio Files
+
+This program includes drum, guitar, and synthesizer sample audio files. Users can manually add their own .wav files to the "data" directory to process their own audio. Make sure any .wav files added do not contain any metadata that may be associated with the software they were exported from (like tempo, automation, markers, etc. that may be saved if bounced from a DAW).
 

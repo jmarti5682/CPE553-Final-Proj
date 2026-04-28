@@ -241,6 +241,11 @@ void Visualizer::drawFrame(const std::vector<double> &chunk, std::string label)
 // =========================
 void visualize(ProcessAudio &processor, std::string label, std::string filename)
 {
+    if (!filename.empty())
+    {
+        processor.loadFile(filename);
+    }
+
     auto samples = processor.getSamples();
     int sampleRate = (int)processor.getSampleRate();
 

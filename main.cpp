@@ -109,6 +109,7 @@ int main()
     float sampleRate = engine.getSampleRate();
     string currentLabel = "Synth (synth_test.wav)";
     string currentFile = "synth_test.wav";
+    string outName = "";
 
     if (sampleRate <= 0)
     {
@@ -232,7 +233,6 @@ int main()
 
             engine.processFile(myStack);
 
-            string outName;
             cout << "Enter the name for your output file (e.g., my_awesome_track.wav): ";
             cin >> outName;
 
@@ -243,14 +243,19 @@ int main()
 
             engine.writeFile(outName);
             cout << "[SYSTEM] Success! Saved to '" << outName << "'.\n";
-            cout << "[SYSTEM] (Visualization module is currently disabled for Windows OS compatibility)\n";
-            
-            keepRunning = false; // 导出后退出程序
+    
             break;
         }
         case 6:
         {
-            visualize(engine, currentLabel, currentFile);
+            if (outName.empty())
+            {
+                cout << "[Warning] No processed output filename available. Please save audio first.\n";
+            }
+            else
+            {
+                visualize(engine, currentLabel, outName);
+            }
             break;
         }
         case 7:
