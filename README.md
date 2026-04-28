@@ -94,10 +94,10 @@ g++ -std=c++17 -I/opt/homebrew/opt/fftw/include -L/opt/homebrew/opt/fftw/lib -o 
 ---
 
 ### Audio Files
+This program includes drum, guitar, and synthesizer sample audio files. Users can manually add their own .wav files to the "data" directory to process their own audio. Make sure any .wav files added do not contain any metadata that may be associated with the software they were exported from (like tempo, automation, markers, etc. that may be saved if bounced from a DAW).
 
 
-To ensure the stability and compilability of the core DSP (Digital Signal Processing) engine 
-on Windows systems, we had to isolate its visualization capabilities. 
+To ensure the stability and compilability of the core DSP (Digital Signal Processing) engine on Windows systems, we had to isolate its visualization capabilities. 
 Modifications Made for Windows Build: If you are compiling this project on a Windows please 
 make the following changes to main.cpp. 
 1.Dependency Cutoff: Comment out  #include "Visualizer.h" to prevent linker failure. 
@@ -106,6 +106,5 @@ statement). The CLI menu will display a system notice.
 This program includes drum, guitar, and synthesizer sample audio files. Users can manually add their own .wav files to the "data" directory to process their own audio. Make sure any .wav files added do not contain any metadata that may be associated with the software they were exported from (like tempo, automation, markers, etc. that may be saved if bounced from a DAW).
 
 <img width="1424" height="781" alt="image" src="https://github.com/user-attachments/assets/b7e05264-e1d1-44c6-8c91-33ca095768d8" />
-Compile on Windows: Please bypass the macOS-specific Makefile and use the following r 
-command in your terminal: g++ -std=c++17 main.cpp ProcessAudio.cpp effects/Effect.cpp effects/Tremolo.cpp effects/Delay.cpp effects/Chorus.cpp -I. -o audio_app.exe
+Compile on Windows: Please bypass the macOS-specific Makefile and use the following command in your terminal: g++ -std=c++17 main.cpp ProcessAudio.cpp effects/Effect.cpp effects/Tremolo.cpp effects/Delay.cpp effects/Chorus.cpp -I. -o audio_app.exe
 
