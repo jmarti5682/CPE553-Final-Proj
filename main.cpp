@@ -135,39 +135,52 @@ int main()
         {
         case 1:
         {
-            cout << "\n--- Audio Files ---\n"
-                 << "1. Guitar\n"
-                 << "2. Synth\n"
-                 << "3. Drums\n";
+            cout << "\n--- Scanning 'data' directory ---\n";
+            vector<string> wavFiles;
+            
+            // 1. 物理防爆：探测文件夹是否存在
+            if (!std::filesystem::exists("data") || !std::filesystem::is_directory("data")) {
+                cout << "[Fatal Error] 'data' directory not found! Please create a folder named 'data' and put .wav files inside.\n";
+                break;
+            }
 
-            int choiceAudio = getValidInt("Enter your choice (1-3): ");
+            // 2. 动态扫描：只提取 .wav 结尾的文件，并且只保留纯文件名
+            for (const auto& entry : std::filesystem::directory_iterator("data")) {
+                if (entry.path().extension() == ".wav") {
+                    // 致命修改：使用 .filename() 剥离路径，只保留 "PeizhiLiu-test.wav"
+                    wavFiles.push_back(entry.path().filename().string()); 
+                }
+            }
 
-            switch (choiceAudio)
-            {
-            case 1:
-            {
-                engine.loadFile("testaudio_clean.wav");
-                currentLabel = "Guitar (testaudio_clean.wav)";
-                currentFile = "testaudio_clean.wav";
-                cout << "-> Loaded guitar test audio for processing\n";
+            // 3. 业务防呆：文件夹里没有音频怎么办？
+            if (wavFiles.empty()) {
+                cout << "[Error] No .wav files found in the 'data' directory.\n";
                 break;
             }
-            case 2:
-            {
-                engine.loadFile("synth_test.wav");
-                currentLabel = "Synth (synth_test.wav)";
-                currentFile = "synth_test.wav";
-                cout << "-> Loaded synth test audio for processing\n";
-                break;
+
+            // 4. 动态生成菜单
+            for (size_t i = 0; i < wavFiles.size(); ++i) {
+                cout << i + 1 << ". " << wavFiles[i] << "\n";
             }
-            case 3:
-            {
-                engine.loadFile("drum_test.wav");
-                currentLabel = "Drums (drum_test.wav)";
-                currentFile = "drum_test.wav";
-                cout << "-> Loaded drum test audio for processing\n";
-                break;
-            }
+
+            // 5. 安全捕获用户输入
+            int fileChoice = getValidInt("Select a file by number (1-" + to_string(wavFiles.size()) + "): ");
+            
+            if (fileChoice >= 1 && fileChoice <= static_cast<int>(wavFiles.size())) {
+                string selectedPath = wavFiles[fileChoice - 1];
+                
+                // 加载选中的文件
+                engine.loadFile(selectedPath);
+                currentFile = selectedPath;
+                currentLabel = "Custom (" + selectedPath + ")";
+                
+                cout << "-> Successfully loaded '" << selectedPath << "' for processing.\n";
+                
+                // 重要防呆：如果用户换了新歌，必须清空之前的效果器栈，否则特效会跨歌曲叠加！
+                myStack = EffectStack(); 
+                cout << "-> [Notice] Effects stack has been reset for the new audio file.\n";
+            } else {
+                cout << "[Error] Invalid selection. Out of range.\n";
             }
             break;
         }
